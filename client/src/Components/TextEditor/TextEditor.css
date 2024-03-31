@@ -1,0 +1,10 @@
+.textEditor-cotainer{
+    height: 85vh;
+    width: 70%;
+    margin: auto;
+}
+.textEditor{
+    padding: 10px 0;
+    height: 100%;
+  
+}
