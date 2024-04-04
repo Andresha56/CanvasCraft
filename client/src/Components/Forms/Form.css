@@ -1,0 +1,16 @@
+
+input{
+    padding: 10px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+}
+p{
+    color:aliceblue !important;
+}
+span{
+    color: aliceblue;
+}
+a{
+    color: rgb(33, 147, 248);
+}
