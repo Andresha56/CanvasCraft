@@ -11,14 +11,18 @@ const io = new Server(server, {
     }
 });
 io.on("connection", (socket) => {
-    console.log("user connected successfully!", socket.id);
+    console.log("user connected successfully!");
 
-    socket.on("joinRoom",({username,roomId})=>{
-        console.log("user joined room  successfully!",username + " " ,roomId);
+    socket.on("joinRoom", ({ username, roomId }) => {
+        console.log("user joined room  successfully!", username + " ", roomId);
+        socket.join(roomId);
+        const initialContent='';
+        socket.emit('load-doc',initialContent)
+        socket.on("text-change", (delta) => {
+            socket.broadcast.to(roomId).emit('receive-changes', delta);
+        })
     })
-    socket.on("text-change",(delta)=>{
-        socket.broadcast.emit('receive-changes',delta);
-    })
+
 });
 
 server.listen(4000, () => {

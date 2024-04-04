@@ -7,21 +7,37 @@ import "./TextEditor.css";
 
 function TextEditor() {
     const [editorValue, setEditorValue] = useState('');
+    const [readOnly, setReadOnly] = useState(true); 
     const location = useLocation();
     const editorRef = useRef(null);
 
     useEffect(() => {
+        console.log("The rrom ID is ",location.state.roomId+ " " +location.state.username )
+        if (!location.state) return; 
+
         const { username, roomId } = location.state;
+        if (!username || !roomId) return; 
+
+        socket.once('load-doc', doc => {
+            const editor = editorRef.current?.getEditor(); 
+            if (editor) {
+                setReadOnly(false); // Make editor editable
+                editor.setContents(doc);
+            }
+        });
+
         socket.emit("joinRoom", {
             username: username,
             roomId: roomId,
         });
-    }, [location]);
+    }, [location.state]);
 
     useEffect(() => {
         const handleReceiveChanges = (delta) => {
-            const editor = editorRef.current.getEditor();
-            editor.updateContents(delta);
+            const editor = editorRef.current?.getEditor();
+            if (editor) {
+                editor.updateContents(delta);
+            }
         };
         socket.on('receive-changes', handleReceiveChanges);
 
@@ -30,7 +46,7 @@ function TextEditor() {
         };
     }, []);
 
-    const handleEditorChange = (content, delta, source, editor) => {
+    const handleEditorChange = (content, delta, source) => {
         if (source === 'user') {
             socket.emit("text-change", delta);
         }
@@ -58,6 +74,7 @@ function TextEditor() {
                     ]
                 }}
                 theme="snow"
+                readOnly={readOnly} 
             />
         </div>
     );

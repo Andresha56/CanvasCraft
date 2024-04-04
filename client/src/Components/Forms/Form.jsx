@@ -35,11 +35,12 @@ function Form() {
     //form submit 
     if (!newRoom) {
       if (inputValues.username && inputValues.Id) {
-        const { username } = inputValues;
-        navigate(`/text/editor/${roomId}`, {
+        const { username, Id } = inputValues;
+        console.log(Id)
+        navigate(`/text/editor/${inputValues.Id}`, {
           state: {
             username,
-            roomId,
+            roomId: Id,
           },
         })
       }
@@ -94,7 +95,7 @@ function Form() {
                 <Stack flexDirection={'row'} gap={2}>
                   <input onChange={handleUserInputs} type="text" placeholder="ROOM ID" value={roomId} readOnly name='Id' />
                   <CopyToClipboard text={textToCopy} onCopy={onCopyText}>
-                    <button>Copy to Clipboard</button>
+                    <button type='button'>Copy to Clipboard</button>
                   </CopyToClipboard>
                 </Stack>
                 {copyStatus && <SnackBar openSnackBar={copyStatus} message={"Copied Successfully!"} />}
