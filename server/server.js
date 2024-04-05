@@ -1,9 +1,12 @@
 import express from "express";
 import { createServer } from 'node:http';
+import { ConnectToDB } from "./Connection/DB.js";
 import { Server } from "socket.io";
+import { findOrCreateDoc } from "./controller/Document.js";
+import { findAndUpdate } from "./controller/Document.js";
 const app = express();
 const server = createServer(app);
-
+ConnectToDB();
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:3000",
@@ -12,16 +15,17 @@ const io = new Server(server, {
 });
 io.on("connection", (socket) => {
     console.log("user connected successfully!");
-
-    socket.on("joinRoom", ({ username, roomId }) => {
-        console.log("user joined room  successfully!", username + " ", roomId);
+    socket.on("joinRoom", async ({ username, roomId, newRoom }) => {
         socket.join(roomId);
-        const initialContent='';
-        socket.emit('load-doc',initialContent)
+        const docs = await findOrCreateDoc(roomId, newRoom)
+        socket.emit('load-doc', docs.data)
         socket.on("text-change", (delta) => {
             socket.broadcast.to(roomId).emit('receive-changes', delta);
         })
-    })
+      socket.on('save-document',async(newData)=>{
+        const result =await findAndUpdate(roomId,newData);
+      })
+})
 
 });
 

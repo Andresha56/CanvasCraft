@@ -41,6 +41,7 @@ function Form() {
           state: {
             username,
             roomId: Id,
+            newRoom:false,
           },
         })
       }
@@ -51,6 +52,7 @@ function Form() {
           state: {
             username,
             roomId,
+            newRoom:true,
           },
         })
       }

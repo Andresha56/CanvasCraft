@@ -7,31 +7,45 @@ import "./TextEditor.css";
 
 function TextEditor() {
     const [editorValue, setEditorValue] = useState('');
-    const [readOnly, setReadOnly] = useState(true); 
+    const [readOnly, setReadOnly] = useState(true);
     const location = useLocation();
     const editorRef = useRef(null);
 
+    // ----handle---changes----in--editor---
+    const handleEditorChange = (content, delta, source) => {
+        if (source === 'user') {
+            socket.emit("text-change", delta);
+        }
+        setEditorValue(content);
+    };
+
+
+    // -----on--document---load---
     useEffect(() => {
-        console.log("The rrom ID is ",location.state.roomId+ " " +location.state.username )
-        if (!location.state) return; 
+        if (!location.state) return;
 
-        const { username, roomId } = location.state;
-        if (!username || !roomId) return; 
+        const { username, roomId, newRoom } = location.state;
+        if (!username || !roomId) return;
 
-        socket.once('load-doc', doc => {
-            const editor = editorRef.current?.getEditor(); 
+        socket.once('load-doc', docString => {
+            const editor = editorRef.current?.getEditor();
+            console.log("The content after page loding is ",JSON.parse(docString))
             if (editor) {
-                setReadOnly(false); // Make editor editable
-                editor.setContents(doc);
+                setReadOnly(false);
+                // Parse the docString back into an object
+                editor.setContents(JSON.parse(docString));
             }
         });
 
         socket.emit("joinRoom", {
-            username: username,
-            roomId: roomId,
+            username,
+            roomId,
+            newRoom
         });
+
     }, [location.state]);
 
+    // -------receive--and---share---changes-------
     useEffect(() => {
         const handleReceiveChanges = (delta) => {
             const editor = editorRef.current?.getEditor();
@@ -45,13 +59,21 @@ function TextEditor() {
             socket.off('receive-changes', handleReceiveChanges);
         };
     }, []);
-
-    const handleEditorChange = (content, delta, source) => {
-        if (source === 'user') {
-            socket.emit("text-change", delta);
+    // ----save---document--on---change----
+    useEffect(()=>{
+        const intervel=setInterval(()=>{
+            const editor = editorRef.current?.getEditor();
+            if(editor){
+                const newData=editor.getContents()
+                console.log(newData)
+                JSON.stringify(editor.getContents())
+                socket.emit("save-document",JSON.stringify(editor.getContents()));
+            }
+        },[4000]);
+        return ()=>{
+            clearInterval(intervel);
         }
-        setEditorValue(content);
-    };
+    },[])
 
     return (
         <div className='textEditor-container'>
@@ -74,7 +96,7 @@ function TextEditor() {
                     ]
                 }}
                 theme="snow"
-                readOnly={readOnly} 
+                readOnly={readOnly}
             />
         </div>
     );
