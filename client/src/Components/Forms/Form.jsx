@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 import "./Form.css";
 import Btn from './Button/Button';
@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import SnackBar from './SnackBar/SnakBar';
 import { useNavigate } from "react-router-dom";
-
+import { socket } from "../../Socket"
 const InitialValues = {
   username: "",
   Id: "",
@@ -20,8 +20,32 @@ function Form() {
   const [copyStatus, setCopyStatus] = useState(false);
   const [inputValues, setInputValues] = useState(InitialValues);
   const [formErrors, setFormErrors] = useState({});
-
+  const [isDocument, setIsDocument] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isDocument) {
+      console.log("I am calling wait...")
+      socket.emit("checkIsDocument", inputValues.Id);
+      socket.once('is-document', response => {
+        if (response.isDocument !== null) {
+          const { username, Id } = inputValues;
+          navigate(`/text/editor/${inputValues.Id}`, {
+            state: {
+              username,
+              roomId: Id,
+              newRoom:false,
+            },
+          })
+        }else{
+          console.log("not present yrrr");
+          setCopyStatus(true);
+        }
+
+      })
+    }
+  }, [isDocument, inputValues.Id,]
+)
   // ----handle-form-inputs---
   const handleUserInputs = (e) => {
     const { name, value } = e.target;
@@ -35,24 +59,16 @@ function Form() {
     //form submit 
     if (!newRoom) {
       if (inputValues.username && inputValues.Id) {
-        const { username, Id } = inputValues;
-        console.log(Id)
-        navigate(`/text/editor/${inputValues.Id}`, {
-          state: {
-            username,
-            roomId: Id,
-            newRoom:false,
-          },
-        })
+        setIsDocument(true);
       }
     } else {
-      if (inputValues.username){
+      if (inputValues.username) {
         const { username } = inputValues;
-        navigate(`/text/editor/${roomId}`,{
+        navigate(`/text/editor/${roomId}`, {
           state: {
             username,
             roomId,
-            newRoom:true,
+            newRoom: true,
           },
         })
       }
@@ -117,6 +133,7 @@ function Form() {
               <Typography color="initial">Paste invited Room ID</Typography>
               <Stack flexDirection={'column'} gap={2} my={2}>
                 <input onChange={handleUserInputs} type="text" placeholder="ROOM ID" name='Id' />
+                {copyStatus && <SnackBar openSnackBar={copyStatus} message={"Docuemnt ID is invalid!"} />}
                 {formErrors?.Id && <p>{formErrors?.Id}</p>}
                 <input onChange={handleUserInputs} type="text" placeholder="USERNAME" name='username' />
                 {formErrors?.username && <p>{formErrors?.username}</p>}

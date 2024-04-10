@@ -4,6 +4,7 @@ import { ConnectToDB } from "./Connection/DB.js";
 import { Server } from "socket.io";
 import { findOrCreateDoc } from "./controller/Document.js";
 import { findAndUpdate } from "./controller/Document.js";
+import { checkIsDocument } from "./controller/Document.js";
 const app = express();
 const server = createServer(app);
 ConnectToDB();
@@ -14,7 +15,7 @@ const io = new Server(server, {
     }
 });
 io.on("connection", (socket) => {
-    console.log("user connected successfully!");
+    console.log("connected successfully!");
     socket.on("joinRoom", async ({ username, roomId, newRoom }) => {
         socket.join(roomId);
         const docs = await findOrCreateDoc(roomId, newRoom)
@@ -22,10 +23,20 @@ io.on("connection", (socket) => {
         socket.on("text-change", (delta) => {
             socket.broadcast.to(roomId).emit('receive-changes', delta);
         })
-      socket.on('save-document',async(newData)=>{
-        const result =await findAndUpdate(roomId,newData);
-      })
-})
+        socket.on('save-document', async (newData) => {
+            const result = await findAndUpdate(roomId, newData);
+        })
+    })
+    socket.on("checkIsDocument", async (documentId) => {
+        try {
+            
+            const isDocument = await checkIsDocument(documentId);
+            socket.emit('is-document', {isDocument});
+        } catch (error) {
+            socket.emit('is-document', { exists: false, error: 'Error checking document' });
+        }
+    });
+    
 
 });
 

@@ -3,18 +3,9 @@ import { Document } from "../model/Document.js";
 export const findOrCreateDoc = async (roomId, newRoom) => {
     try {
         if (newRoom) {
-            console.log("New Room");
-            const document = await Document.findById(roomId);
-            console.log(document)
-            if (document) {
-                return document;
-            } else {
-                console.log("Document not found, creating new one");
-                const initialValue = '';
-                return await Document.create({ _id: roomId, data: initialValue });
-            }
+            const initialValue = '';
+            return await Document.create({ _id: roomId, data: initialValue });
         } else {
-            console.log("Existing Room");
             const room = await Document.findById(roomId);
             return room;
         }
@@ -34,3 +25,9 @@ export const findAndUpdate = async (roomId, newData) => {
         throw error;
     }
 };
+
+export const checkIsDocument=async(docId)=>{
+    const _id=docId;
+    const isDoc=await Document.findById(_id);
+    return isDoc;
+}

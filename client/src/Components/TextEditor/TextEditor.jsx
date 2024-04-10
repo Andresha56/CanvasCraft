@@ -26,14 +26,14 @@ function TextEditor() {
 
         const { username, roomId, newRoom } = location.state;
         if (!username || !roomId) return;
-
         socket.once('load-doc', docString => {
             const editor = editorRef.current?.getEditor();
-            console.log("The content after page loding is ",JSON.parse(docString))
             if (editor) {
                 setReadOnly(false);
                 // Parse the docString back into an object
-                editor.setContents(JSON.parse(docString));
+                if(!newRoom){
+                    editor.setContents(JSON.parse(docString));
+                }
             }
         });
 
