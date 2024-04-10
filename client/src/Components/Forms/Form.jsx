@@ -14,8 +14,8 @@ const InitialValues = {
 }
 
 function Form() {
-  const [newRoom, setNewRoom] = useState(false);
-  const [roomId, setRoomId] = useState('');
+  const [newDocument, setnewDocument] = useState(false);
+  const [DocumentID, setDocumentID] = useState('');
   const [textToCopy, setTextToCopy] = useState('');
   const [copyStatus, setCopyStatus] = useState(false);
   const [inputValues, setInputValues] = useState(InitialValues);
@@ -25,7 +25,6 @@ function Form() {
 
   useEffect(() => {
     if (isDocument) {
-      console.log("I am calling wait...")
       socket.emit("checkIsDocument", inputValues.Id);
       socket.once('is-document', response => {
         if (response.isDocument !== null) {
@@ -33,8 +32,8 @@ function Form() {
           navigate(`/text/editor/${inputValues.Id}`, {
             state: {
               username,
-              roomId: Id,
-              newRoom:false,
+              DocumentID: Id,
+              newDocument:false,
             },
           })
         }else{
@@ -57,18 +56,18 @@ function Form() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     //form submit 
-    if (!newRoom) {
+    if (!newDocument) {
       if (inputValues.username && inputValues.Id) {
         setIsDocument(true);
       }
     } else {
       if (inputValues.username) {
         const { username } = inputValues;
-        navigate(`/text/editor/${roomId}`, {
+        navigate(`/text/editor/${DocumentID}`, {
           state: {
             username,
-            roomId,
-            newRoom: true,
+            DocumentID,
+            newDocument: true,
           },
         })
       }
@@ -77,13 +76,13 @@ function Form() {
     //handle errors
     const errors = {};
     if (!inputValues.username) errors.username = 'Username is required!';
-    if (!inputValues.Id) errors.Id = 'Room ID is required!';
+    if (!inputValues.Id) errors.Id = 'Document ID is required!';
     setFormErrors(errors);
 
   }
   // ----create---new-------
   const handleNewDocument = () => {
-    setNewRoom(!newRoom);
+    setnewDocument(!newDocument);
     setFormErrors("");
     uuidFromUuidV4();
   };
@@ -91,7 +90,7 @@ function Form() {
   // ----generate---uuid---for---the---newDocument
   const uuidFromUuidV4 = () => {
     const newUuid = uuid();
-    setRoomId(newUuid);
+    setDocumentID(newUuid);
     setTextToCopy(newUuid);
   };
 
@@ -105,14 +104,14 @@ function Form() {
     <Box height={"100vh"} bgcolor={'inherit'} className='form-wrapper' >
       <Stack justifyContent={'center'} alignItems={'center'} height={'100%'}>
         <form onSubmit={handleFormSubmit}>
-          {newRoom ? (
+          {newDocument ? (
             <Box key="new-document" className="form-container">
               <Typography color="initial">
                 Share Document ID to join more people
               </Typography>
               <Stack flexDirection={'column'} gap={2} my={2}>
                 <Stack flexDirection={'row'} gap={2}>
-                  <input onChange={handleUserInputs} type="text" placeholder="Document ID" value={roomId} readOnly name='Id' />
+                  <input onChange={handleUserInputs} type="text" placeholder="Document ID" value={DocumentID} readOnly name='Id' />
                   <CopyToClipboard text={textToCopy} onCopy={onCopyText}>
                     <button type='button' className='copy-to-clipboard'>Copy to Clipboard</button>
                   </CopyToClipboard>

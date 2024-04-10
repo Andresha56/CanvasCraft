@@ -1,13 +1,12 @@
 import { Document } from "../model/Document.js";
 
-export const findOrCreateDoc = async (roomId, newRoom) => {
+export const findOrCreateDoc = async (DocumentID, newDocument) => {
     try {
-        if (newRoom) {
+        if (newDocument) {
             const initialValue = '';
-            return await Document.create({ _id: roomId, data: initialValue });
+            return await Document.create({ _id: DocumentID, data: initialValue });
         } else {
-            console.log("check Existing Room");
-            const room = await Document.findById(roomId);
+            const room = await Document.findById(DocumentID);
             return room;
         }
     } catch (error) {
@@ -16,10 +15,9 @@ export const findOrCreateDoc = async (roomId, newRoom) => {
     }
 };
 
-export const findAndUpdate = async (roomId, newData) => {
+export const findAndUpdate = async (DocumentID, newData) => {
     try {
-        console.log("Updating document with ID:", roomId);
-        const updatedDoc = await Document.findByIdAndUpdate(roomId, { data: newData });
+        const updatedDoc = await Document.findByIdAndUpdate(DocumentID, { data: newData });
         return updatedDoc;
     } catch (error) {
         console.error("Error in findAndUpdate:", error);

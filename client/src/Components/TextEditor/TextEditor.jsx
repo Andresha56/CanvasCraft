@@ -24,14 +24,14 @@ function TextEditor() {
     useEffect(() => {
         if (!location.state) return;
 
-        const { username, roomId, newRoom } = location.state;
-        if (!username || !roomId) return;
+        const { username, DocumentID, newDocument } = location.state;
+        if (!username || !DocumentID) return;
         socket.once('load-doc', docString => {
             const editor = editorRef.current?.getEditor();
             if (editor) {
                 setReadOnly(false);
                 // Parse the docString back into an object
-                if(!newRoom){
+                if(!newDocument){
                     editor.setContents(JSON.parse(docString));
                 }
             }
@@ -39,8 +39,8 @@ function TextEditor() {
 
         socket.emit("joinRoom", {
             username,
-            roomId,
-            newRoom
+            DocumentID,
+            newDocument
         });
 
     }, [location.state]);
@@ -64,8 +64,7 @@ function TextEditor() {
         const intervel=setInterval(()=>{
             const editor = editorRef.current?.getEditor();
             if(editor){
-                const newData=editor.getContents()
-                console.log(newData)
+
                 JSON.stringify(editor.getContents())
                 socket.emit("save-document",JSON.stringify(editor.getContents()));
             }

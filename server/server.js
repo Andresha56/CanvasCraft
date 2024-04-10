@@ -16,22 +16,21 @@ const io = new Server(server, {
 });
 io.on("connection", (socket) => {
     console.log("user connected successfully!");
-    socket.on("joinRoom", async ({ username, roomId, newRoom }) => {
-        socket.join(roomId);
-        const docs = await findOrCreateDoc(roomId, newRoom)
+    socket.on("joinRoom", async ({ username, DocumentID, newDocument }) => {
+        socket.join(DocumentID);
+        const docs = await findOrCreateDoc(DocumentID, newDocument)
         socket.emit('load-doc', docs.data)
         socket.on("text-change", (delta) => {
-            socket.broadcast.to(roomId).emit('receive-changes', delta);
+            socket.broadcast.to(DocumentID).emit('receive-changes', delta);
         })
         socket.on('save-document', async (newData) => {
-            const result = await findAndUpdate(roomId, newData);
+            const result = await findAndUpdate(DocumentID, newData);
         })
     })
     socket.on("checkIsDocument", async (documentId) => {
         try {
             
             const isDocument = await checkIsDocument(documentId);
-            console.log(isDocument)
             socket.emit('is-document', {isDocument});
         } catch (error) {
             console.error('Error checking document:', error);
