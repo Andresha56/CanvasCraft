@@ -6,6 +6,7 @@ export const findOrCreateDoc = async (roomId, newRoom) => {
             const initialValue = '';
             return await Document.create({ _id: roomId, data: initialValue });
         } else {
+            console.log("check Existing Room");
             const room = await Document.findById(roomId);
             return room;
         }

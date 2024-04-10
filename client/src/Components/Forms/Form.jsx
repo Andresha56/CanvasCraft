@@ -81,13 +81,14 @@ function Form() {
     setFormErrors(errors);
 
   }
-  // ----create---new---room----
-  const handleNewRoom = () => {
+  // ----create---new-------
+  const handleNewDocument = () => {
     setNewRoom(!newRoom);
+    setFormErrors("");
     uuidFromUuidV4();
   };
 
-  // ----generate---uuid---for---the---newRoom
+  // ----generate---uuid---for---the---newDocument
   const uuidFromUuidV4 = () => {
     const newUuid = uuid();
     setRoomId(newUuid);
@@ -101,48 +102,48 @@ function Form() {
   };
 
   return (
-    <Box height={"100vh"} bgcolor={'inherit'} className='form-wrapper'>
+    <Box height={"100vh"} bgcolor={'inherit'} className='form-wrapper' >
       <Stack justifyContent={'center'} alignItems={'center'} height={'100%'}>
         <form onSubmit={handleFormSubmit}>
           {newRoom ? (
-            <Box key="new-room">
+            <Box key="new-document" className="form-container">
               <Typography color="initial">
-                Share Room ID to join more people
+                Share Document ID to join more people
               </Typography>
               <Stack flexDirection={'column'} gap={2} my={2}>
                 <Stack flexDirection={'row'} gap={2}>
-                  <input onChange={handleUserInputs} type="text" placeholder="ROOM ID" value={roomId} readOnly name='Id' />
+                  <input onChange={handleUserInputs} type="text" placeholder="Document ID" value={roomId} readOnly name='Id' />
                   <CopyToClipboard text={textToCopy} onCopy={onCopyText}>
-                    <button type='button'>Copy to Clipboard</button>
+                    <button type='button' className='copy-to-clipboard'>Copy to Clipboard</button>
                   </CopyToClipboard>
                 </Stack>
                 {copyStatus && <SnackBar openSnackBar={copyStatus} message={"Copied Successfully!"} />}
                 <input onChange={handleUserInputs} type="text" placeholder="USERNAME" name='username' />
                 {formErrors.username && <p>{formErrors.username}</p>}
               </Stack>
-              <Btn value={'JOIN'} />
+              <Btn value={'JOIN'}/>
               <span>
                 Have invite &nbsp;
-                <Link to="/" onClick={handleNewRoom}>
-                  join room
+                <Link to="/" onClick={handleNewDocument}>
+                  join here 
                 </Link>
               </span>
             </Box>
           ) : (
-            <Stack key="join-room">
-              <Typography color="initial">Paste invited Room ID</Typography>
+            <Stack key="join-document" className="form-container">
+              <Typography color="initial">Paste Document ID</Typography>
               <Stack flexDirection={'column'} gap={2} my={2}>
-                <input onChange={handleUserInputs} type="text" placeholder="ROOM ID" name='Id' />
+                <input onChange={handleUserInputs} type="text" placeholder="Document ID" name='Id' />
                 {copyStatus && <SnackBar openSnackBar={copyStatus} message={"Docuemnt ID is invalid!"} />}
                 {formErrors?.Id && <p>{formErrors?.Id}</p>}
                 <input onChange={handleUserInputs} type="text" placeholder="USERNAME" name='username' />
                 {formErrors?.username && <p>{formErrors?.username}</p>}
               </Stack>
-              <Btn value={'JOIN'} />
+              <Btn value={'JOIN'} mb={1}/>
               <span>
-                If you didn't have invite create &nbsp;
-                <Link to="/" onClick={handleNewRoom}>
-                  new room
+                If you didn't have ID create &nbsp;
+                <Link to="/" onClick={handleNewDocument}>
+                  new document
                 </Link>
               </span>
             </Stack>

@@ -1,16 +1,29 @@
+input,p,span,a{
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.form-container{
+    background-color:#222222;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;}
 
-input{
+.form-container input{
     padding: 10px;
     outline: none;
     border: none;
-    border-radius: 5px;
+    border-radius: 5px; 
 }
-p{
+.form-container p,span{
     color:aliceblue !important;
+    margin: 0;
+    font-size:14px; 
 }
-span{
-    color: aliceblue;
+.form-container a{
+    color: rgb(0, 136, 255);
 }
-a{
-    color: rgb(33, 147, 248);
+.form-container .copy-to-clipboard{
+    border-radius: 5px;
+    border:0;
+
 }
+

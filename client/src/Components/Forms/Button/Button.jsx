@@ -1,10 +1,12 @@
 import { Button,Stack } from '@mui/material';
-function Btn({ value }) {
+function Btn({ value, mb }) {
+    console.log(mb)
     return (
-
+        
         <Stack flexDirection={'row-reverse'}>
-            <Button type='submit' sx={{
+            <Button type='submit'  sx={{
                 bgcolor: "#00796b",
+                marginBottom:mb,
                 color: "#ffffff",
                 "&:hover": {
                     bgcolor: "#00796b",

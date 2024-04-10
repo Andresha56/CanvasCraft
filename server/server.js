@@ -15,7 +15,7 @@ const io = new Server(server, {
     }
 });
 io.on("connection", (socket) => {
-    console.log("connected successfully!");
+    console.log("user connected successfully!");
     socket.on("joinRoom", async ({ username, roomId, newRoom }) => {
         socket.join(roomId);
         const docs = await findOrCreateDoc(roomId, newRoom)
@@ -31,8 +31,10 @@ io.on("connection", (socket) => {
         try {
             
             const isDocument = await checkIsDocument(documentId);
+            console.log(isDocument)
             socket.emit('is-document', {isDocument});
         } catch (error) {
+            console.error('Error checking document:', error);
             socket.emit('is-document', { exists: false, error: 'Error checking document' });
         }
     });
