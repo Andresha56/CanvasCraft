@@ -1,10 +1,42 @@
-.textEditor-cotainer{
-    height: 85vh;
-    width: 80%;
+
+.textEditor{
+    padding: 0 0 20px 0;
+    height: 80vh;
     margin: auto;
 }
-.textEditor{
-    padding: 10px 0;
-    height: 100%;
-  
+.ql-container{
+    width: 90%;
+    margin: auto;
 }
+.ql-editor * {
+    color: white;   
+}
+.ql-container.ql-snow{
+    border: none;
+}
+.ql-toolbar.ql-snow{
+    border: none;
+    width: 100%;
+    background-color: #252525;
+    padding: 20px 0px 20px 80px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+    
+.ql-editor{
+    margin-top: 30px;
+}
+
+.ql-snow .ql-stroke {
+    stroke: #fbfafa;
+}
+
+.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options{
+    border-color: #2c2c2c;
+    background: #2c2c2c;
+}
+
+
+

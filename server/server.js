@@ -19,6 +19,7 @@ io.on("connection", (socket) => {
     socket.on("joinRoom", async ({ username, DocumentID, newDocument }) => {
         socket.join(DocumentID);
         const docs = await findOrCreateDoc(DocumentID, newDocument)
+        console.log(docs.data);
         socket.emit('load-doc', docs.data)
         socket.on("text-change", (delta) => {
             socket.broadcast.to(DocumentID).emit('receive-changes', delta);

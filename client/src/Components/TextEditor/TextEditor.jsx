@@ -4,6 +4,8 @@ import ReactQuill from 'react-quill';
 import { socket } from '../../Socket';
 import { useLocation } from 'react-router-dom';
 import "./TextEditor.css";
+import User from '../Drawer/Users';
+
 
 function TextEditor() {
     const [editorValue, setEditorValue] = useState('');
@@ -23,7 +25,6 @@ function TextEditor() {
     // -----on--document---load---
     useEffect(() => {
         if (!location.state) return;
-
         const { username, DocumentID, newDocument } = location.state;
         if (!username || !DocumentID) return;
         socket.once('load-doc', docString => {
@@ -31,7 +32,7 @@ function TextEditor() {
             if (editor) {
                 setReadOnly(false);
                 // Parse the docString back into an object
-                if(!newDocument){
+                if (docString) {
                     editor.setContents(JSON.parse(docString));
                 }
             }
@@ -60,28 +61,31 @@ function TextEditor() {
         };
     }, []);
     // ----save---document--on---change----
-    useEffect(()=>{
-        const intervel=setInterval(()=>{
+    useEffect(() => {
+        const intervel = setInterval(() => {
             const editor = editorRef.current?.getEditor();
-            if(editor){
-
+            if (editor) {
                 JSON.stringify(editor.getContents())
-                socket.emit("save-document",JSON.stringify(editor.getContents()));
+                socket.emit("save-document", JSON.stringify(editor.getContents()));
             }
-        },[4000]);
-        return ()=>{
+        }, [1000]);
+        return () => {
             clearInterval(intervel);
         }
-    },[])
+    }, [])
+
+
 
     return (
         <div className='textEditor-container'>
+            <User />
             <ReactQuill
                 ref={editorRef}
                 className='textEditor'
                 value={editorValue}
                 onChange={handleEditorChange}
                 modules={{
+
                     toolbar: [
                         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
                         [{ 'font': [] }],
@@ -97,6 +101,7 @@ function TextEditor() {
                 theme="snow"
                 readOnly={readOnly}
             />
+
         </div>
     );
 }
